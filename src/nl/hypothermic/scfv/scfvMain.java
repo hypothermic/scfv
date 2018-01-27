@@ -68,7 +68,6 @@ public class scfvMain {
     private static void initAndShowGUI() {
     	Logger.getLogger("scfvMain").log(Level.INFO, "Created GUI instance");
         scfvMain cl = new scfvMain(0, 0, usr, passwd, addr, 0, 0, false);
-    	System.out.println("debug addr: " + scfvMain.addr);
         JFrame frame = new JFrame("scfv - " + scfvMain.addr + cl.port);
         final JFXPanel fxPanel = new JFXPanel();
         frame.getContentPane().add(fxPanel);

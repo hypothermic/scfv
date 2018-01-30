@@ -53,8 +53,8 @@ public class scfvMain {
 	private int port = 88;
 	private int interval = 500;
 
-	public scfvMain(int width, int height, String usr, String passwd, InetAddress addr, int port, int interval, boolean isConstructed) {
-		Logger x = Logger.getLogger("scfvMain"); x.log(Level.FINER, "Created scfvMain instance");
+	public scfvMain(int width, int height, String usr, String passwd, InetAddress addr, int port, int interval, boolean isConstructed, boolean newThread) {
+		Logger x = Logger.getLogger("scfvMain"); x.log(Level.INFO, "Created scfvMain instance");
 		if (width <= 10) { if ((this.width) > 10) { x.log(Level.FINER, "Info: using initialized value for width."); } else { x.log(Level.SEVERE, "Critical error: both initialized width and passed width are not compliant to standards."); return; }}
 		if (height <= 10) { if ((this.height) > 10) { x.log(Level.FINER, "Info: using initialized value for height."); } else { x.log(Level.SEVERE, "Critical error: both initialized height and passed height are not compliant to standards."); return; }}
 		if (port <= 0 && port >= 25566) { if (this.port > 0 && this.port < 25566) { x.log(Level.FINER, "Info: using initialized value for port."); } else { x.log(Level.SEVERE, "Critical error: both initialized port and passed port are not compliant to standards."); return; }}
@@ -62,18 +62,22 @@ public class scfvMain {
 		if (passwd != null) { scfvMain.passwd = passwd; } else { x.log(Level.FINER, "Info: using initialized value for passwd."); }
 		if (addr != null) { scfvMain.addr = addr; } else { x.log(Level.FINER, "Info: using initialized value for addr."); }
 		if (interval <= 40 && interval >= Integer.MAX_VALUE) { if (this.interval > 40 && this.interval < Integer.MAX_VALUE) { x.log(Level.FINER, "Info: using initialized value for port."); } else { x.log(Level.SEVERE, "Critical error: both initialized interval and passed interval are not compliant to standards."); return; }}
-		if (isConstructed == true) { main(); }
+		if (!newThread) {
+			if (isConstructed == true) { main(); Logger.getLogger("scfvMain").log(Level.INFO, "Not created new thread");}
+		} else {
+			if (isConstructed == true) { new Thread() { public void run() { new scfvMain(0, 0, usr, passwd, addr, 0, 0, true, false); }}.start();; Logger.getLogger("scfvMain").log(Level.INFO, "Created new thread");}
+		}
 	}
 	
     private static void initAndShowGUI() {
     	Logger.getLogger("scfvMain").log(Level.INFO, "Created GUI instance");
-        scfvMain cl = new scfvMain(0, 0, usr, passwd, addr, 0, 0, false);
-        JFrame frame = new JFrame("scfv - " + scfvMain.addr + cl.port);
+        scfvMain cl = new scfvMain(0, 0, usr, passwd, addr, 0, 0, false, false);
+        final JFrame frame = new JFrame("scfv - " + scfvMain.addr + cl.port);
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         final JFXPanel fxPanel = new JFXPanel();
         frame.getContentPane().add(fxPanel);
         frame.setSize(cl.width, cl.height);
         frame.setVisible(true);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         Platform.runLater(new Runnable() {
         	@Override
@@ -133,10 +137,6 @@ public class scfvMain {
     private static void setPicStream(VBox x) {
     	picstream = x;
     }
-
-    /*comment: overbodig. public WebView getWebView() {
-    	return e;
-    }*/
     
     private static WebView e;
     private static HBox scrroot;
@@ -157,6 +157,7 @@ public class scfvMain {
     private static boolean initialized = false;
 
     private static void main() {
+    	Logger.getLogger("scfvMain").log(Level.INFO, "launched main");
     	if (initialized == false) {
     		initialized = true;
     		SwingUtilities.invokeLater(new Runnable() {
@@ -165,7 +166,7 @@ public class scfvMain {
     				initAndShowGUI();
     			}
     	});}
-    	scfvMain cl = new scfvMain(0, 0, usr, passwd, addr, 0, 0, false);
+    	scfvMain cl = new scfvMain(0, 0, usr, passwd, addr, 0, 0, false, false);
     	int intervalx = cl.interval;
 		scfvUpdater x = new scfvUpdater(intervalx);
     }

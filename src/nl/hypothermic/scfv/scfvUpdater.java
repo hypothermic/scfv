@@ -19,7 +19,7 @@ public class scfvUpdater {
 	 */
 	
 	public scfvUpdater(final int interval) {
-		scfvMain cl = new scfvMain(0, 0, null, null, null, 0, 0, false);
+		scfvMain cl = new scfvMain(0, 0, null, null, null, 0, 0, false, false);
         new Thread() {
             public void run() {
             	try {

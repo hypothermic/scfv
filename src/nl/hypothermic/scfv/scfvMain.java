@@ -1,7 +1,18 @@
 package nl.hypothermic.scfv;
 
 import java.awt.EventQueue;
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.DataInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.net.HttpURLConnection;
 import java.net.InetAddress;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLEncoder;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -9,9 +20,12 @@ import javax.swing.JFrame;
 
 import javafx.application.Platform;
 import javafx.embed.swing.JFXPanel;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -23,6 +37,12 @@ import javafx.scene.web.WebView;
 
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import java.awt.BorderLayout;
 
@@ -42,6 +62,11 @@ public class scfvMain {
 	 * >> import nl.hypothermic.scfv.*;
 	 * - Call the main method:
 	 * >> scfvMain(int width, int height, String usr, String passwd, InetAddress addr, int port, int interval, true);
+	 */
+	
+	/** To-do list:
+	 * - Media controls, ln 135
+	 * - rtsp?
 	 */
 	
 	// default values. constructor changes them if passed correctly.
@@ -65,7 +90,7 @@ public class scfvMain {
 		if (!newThread) {
 			if (isConstructed == true) { main(); Logger.getLogger("scfvMain").log(Level.INFO, "Not created new thread");}
 		} else {
-			if (isConstructed == true) { new Thread() { public void run() { new scfvMain(0, 0, usr, passwd, addr, 0, 0, true, false); }}.start();; Logger.getLogger("scfvMain").log(Level.INFO, "Created new thread");}
+			if (isConstructed == true) { new Thread() { public void run() { new scfvMain(width, height, usr, passwd, addr, port, interval, true, false); }}.start();; Logger.getLogger("scfvMain").log(Level.INFO, "Created new thread");}
 		}
 	}
 	
@@ -93,6 +118,7 @@ public class scfvMain {
     }
 
     private static Scene createScene() {
+    	VBox ctrls = new VBox();
         VBox picstream = new VBox();
         setPicStream(picstream);
         picstream.setAlignment(Pos.CENTER);
@@ -105,6 +131,73 @@ public class scfvMain {
         scrroot.getChildren().add(splashex);
         scrroot.getChildren().add(splashef);
         Scene scene = new Scene(scrroot);
+        
+        Button mirror = new Button("Mirror");
+        /* TODO scrroot.getChildren().add(ctrls);
+         * ctrls.setAlignment(Pos.BOTTOM_CENTER);
+         * ctrls.getChildren().add(mirror);*/
+        mirror.setOnAction(new EventHandler<ActionEvent>() {
+            @Override public void handle(ActionEvent e) {
+            	mirror.setVisible(false);
+                System.out.println("Mirroring screen...");
+                post();
+                mirror.setVisible(true);
+            }
+            
+            private void post() {
+            	try {
+            	scfvMain cl = new scfvMain(0, 0, usr, passwd, addr, 0, 0, false, false);
+                StringBuffer sb = new StringBuffer();
+                sb.append( URLEncoder.encode("cmd") + "=" );
+                sb.append( URLEncoder.encode("getProductModel"));
+                sb.append( "&" + URLEncoder.encode("usr") + "=" );
+                sb.append( URLEncoder.encode(usr));
+                sb.append( "&" + URLEncoder.encode("pwd") + "=" );
+                sb.append( URLEncoder.encode(passwd));
+                String formData = sb.toString();
+                System.out.println("[INFO] Connecting to: http://" + addr.toString() + ":" + cl.port + "/cgi-bin/CGIProxy.fcgi");
+                URL url = new URL("http:/" + addr.toString() + ":" + cl.port + "/cgi-bin/CGIProxy.fcgi");
+                HttpURLConnection urlcon = (HttpURLConnection) url.openConnection();
+                urlcon.setRequestMethod("POST");
+                urlcon.setRequestProperty("Content-type", "application/x-www-form-urlencoded");
+                urlcon.setDoOutput(true);
+                urlcon.setDoInput(true);
+                System.out.println("[INFO] Sending data: " + formData);
+                PrintWriter pout = new PrintWriter(new OutputStreamWriter(urlcon.getOutputStream(),"8859_1"), true);
+                pout.print(formData);
+                pout.flush();
+                DataInputStream input = new DataInputStream(urlcon.getInputStream());
+                StringBuffer out = new StringBuffer(); String xs;
+                while (null != ((xs = input.readLine()))) {
+                	out.append(xs);
+                }
+                String res = cl.parseCgiResult(out.toString());
+                if (res == null | res == "" | res == " ") { System.out.println("[ERROR] Error: invalid CGI response"); 
+                } else if (res.contains("0")) {
+                	// success
+                } else if (res.contains("-1")) {
+                	System.out.println("[ERROR] Received CGI code -1: request string format error");
+                } else if (res.contains("-2")) {
+                	System.out.println("[ERROR] Received CGI code -2: username or password error");
+                } else if (res.contains("-3")) {
+                	System.out.println("[ERROR] Received CGI code -3: access denied");
+                } else if (res.contains("-4")) {
+                	System.out.println("[ERROR] Received CGI code -4: cgi execute fail");
+                } else if (res.contains("-5")) {
+                	System.out.println("[ERROR] Received CGI code -5: timeout");
+                } else if (res.contains("-6")) {
+                	System.out.println("[ERROR] Received CGI code -6: <reserved code>");
+                } else if (res.contains("-7")) {
+                	System.out.println("[ERROR] Received CGI code -7: unknown error");
+                } else if (res.contains("-8")) {
+                	System.out.println("[ERROR] Received CGI code -8: <reserved code>");
+                }
+                input.close();
+            	} catch (Exception x) {
+            		x.printStackTrace();
+            	}
+            }
+        });
         
         WebView x = new WebView();
         
@@ -149,7 +242,9 @@ public class scfvMain {
                 scrroot.getChildren().clear();
                 scrroot.getChildren().add(picstream);
             	e.setVisible(true);
+            	//rtsp not supported e.getEngine().load("rtsp://" + addr + ":" + port + "/videoMain");
                 e.getEngine().load("http://" + addr + ":" + port + "/cgi-bin/CGIProxy.fcgi?cmd=snapPicture2&usr=" + usr + "&pwd=" + passwd);
+            	//e.getEngine().load("http://" + addr + ":" + port + "/cgi-bin/CGIProxy.fcgi?cmd=flipVideo&isFlip=1&usr=" + usr + "&pwd=" + passwd);
             }
         });
     }
@@ -169,5 +264,35 @@ public class scfvMain {
     	scfvMain cl = new scfvMain(0, 0, usr, passwd, addr, 0, 0, false, false);
     	int intervalx = cl.interval;
 		scfvUpdater x = new scfvUpdater(intervalx);
+    }
+    
+    private String parseCgiResult(final String xml) {
+    	String result;
+    	try {
+    		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+    		DocumentBuilder db = dbf.newDocumentBuilder();
+    		ByteArrayInputStream bis = new ByteArrayInputStream(xml.getBytes());
+    		Document doc = db.parse(bis);
+    		Node n = doc.getFirstChild();
+    		NodeList nl = n.getChildNodes();
+    		Node an,an2;
+
+    		for (int i=0; i < nl.getLength(); i++) {
+    	    	an = nl.item(i);
+    	    	if(an.getNodeType()==Node.ELEMENT_NODE) {
+    	        	NodeList nl2 = an.getChildNodes();
+
+    	        	for(int i2=0; i2<nl2.getLength(); i2++) {
+    	            	an2 = nl2.item(i2);
+    	            	if (nl2.toString().contains("result")) {
+    	            		result = an2.getNodeValue();
+    	            	}
+    	        	}
+    	    	}
+    		}
+    	} catch (Exception x) {
+    		x.printStackTrace();
+    	}
+		return xml;
     }
 }

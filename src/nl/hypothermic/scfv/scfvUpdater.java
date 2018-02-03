@@ -1,5 +1,12 @@
 package nl.hypothermic.scfv;
 
+import java.io.DataInputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLEncoder;
+
 public class scfvUpdater {
 	
 	/** Security Camera Feed Viewer Library
@@ -28,15 +35,26 @@ public class scfvUpdater {
 				} catch (InterruptedException e1) {
 					e1.printStackTrace();
 				}
-                while (true) {
-                	try {
-						Thread.sleep(interval);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-						System.exit(1);
-					}
-                	cl.updateWebView();
-                }
+            	String rs = cl.post("getDevInfo");
+            	System.out.println(rs);
+            	cl.rmSplashScreen();
+            	if (rs.contains("0")) {
+            		while (true) {
+                		try {
+							Thread.sleep(interval);
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+							System.exit(1);
+						}
+                		cl.updateWebView();
+                	}
+            	} else if (rs.contains("-2")) {
+            		System.out.println("[ERROR] Account does not exist."); System.exit(1);
+            	} else if (rs.contains("-3")) {
+            		System.out.println("[ERROR] Access denied."); System.exit(1);
+            	} else {
+            		System.out.println(cl.post("getDevInfo"));
+            	}
             }
         }.start();
 	}

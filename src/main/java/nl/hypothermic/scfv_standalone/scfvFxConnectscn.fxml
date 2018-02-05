@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import javafx.scene.web.*?>
+<?import javafx.scene.media.*?>
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="200.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <Pane blendMode="DARKEN" layoutX="7.0" layoutY="148.0" opacity="0.16" prefHeight="43.0" prefWidth="584.0" style="-fx-background-color: #232323;" />
+      <Button layoutX="496.0" layoutY="154.0" mnemonicParsing="false" prefHeight="32.0" prefWidth="90.0" style="-fx-focus-color: #ffa500; -fx-accent: #ffa500;" text="Connect" />
+      <TextField layoutX="154.0" layoutY="154.0" prefHeight="32.0" prefWidth="200.0" style="-fx-focus-color: #ffa500; -fx-accent: #ffa500;" />
+      <TextField layoutX="374.0" layoutY="154.0" prefHeight="32.0" prefWidth="104.0" style="-fx-focus-color: #ffa500; -fx-accent: #ffa500;" />
+      <Label alignment="CENTER" contentDisplay="CENTER" layoutX="357.0" layoutY="155.0" prefHeight="32.0" prefWidth="13.0" text=":">
+         <font>
+            <Font size="22.0" />
+         </font>
+      </Label>
+      <Label alignment="CENTER_RIGHT" layoutX="14.0" layoutY="154.0" prefHeight="32.0" prefWidth="135.0" text="Remote Address:">
+         <font>
+            <Font size="15.0" />
+         </font>
+      </Label>
+      <Text layoutX="11.0" layoutY="139.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Local network interfaces:" wrappingWidth="578.0" />
+   </children>
+</AnchorPane>

@@ -7,13 +7,12 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="200.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="200.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="nl.hypothermic.scfv_standalone.scfvLauncherController">
    <children>
       <Pane blendMode="DARKEN" layoutX="7.0" layoutY="148.0" opacity="0.16" prefHeight="43.0" prefWidth="584.0" style="-fx-background-color: #232323;" />
-      <Button layoutX="496.0" layoutY="154.0" mnemonicParsing="false" prefHeight="32.0" prefWidth="90.0" style="-fx-focus-color: #ffa500; -fx-accent: #ffa500;" text="Connect" />
-      <TextField layoutX="154.0" layoutY="154.0" prefHeight="32.0" prefWidth="200.0" style="-fx-focus-color: #ffa500; -fx-accent: #ffa500;" />
-      <TextField layoutX="374.0" layoutY="154.0" prefHeight="32.0" prefWidth="104.0" style="-fx-focus-color: #ffa500; -fx-accent: #ffa500;" />
+      <Button fx:id="connectbtn" layoutX="496.0" layoutY="154.0" mnemonicParsing="false" onAction="#connectbtn" prefHeight="32.0" prefWidth="90.0" style="-fx-focus-color: #ffa500; -fx-accent: #ffa500;" text="Connect" />
+      <TextField fx:id="addrfi" layoutX="154.0" layoutY="154.0" prefHeight="32.0" prefWidth="200.0" style="-fx-focus-color: #ffa500; -fx-accent: #ffa500;" />
+      <TextField fx:id="portfi" layoutX="374.0" layoutY="154.0" prefHeight="32.0" prefWidth="104.0" style="-fx-focus-color: #ffa500; -fx-accent: #ffa500;" />
       <Label alignment="CENTER" contentDisplay="CENTER" layoutX="357.0" layoutY="155.0" prefHeight="32.0" prefWidth="13.0" text=":">
          <font>
             <Font size="22.0" />
@@ -24,6 +23,11 @@
             <Font size="15.0" />
          </font>
       </Label>
-      <Text layoutX="11.0" layoutY="139.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Local network interfaces:" wrappingWidth="578.0" />
+      <Text fx:id="nictxt" layoutX="11.0" layoutY="139.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Local network interfaces: " wrappingWidth="578.0" />
+      <Pane fx:id="progpane" layoutX="-1.0" opacity="0.6" prefHeight="200.0" prefWidth="600.0" style="-fx-background-color: #232323;" visible="false">
+         <children>
+            <ProgressBar fx:id="progbar" layoutX="200.0" layoutY="90.0" prefWidth="200.0" progress="0.0" />
+         </children>
+      </Pane>
    </children>
 </AnchorPane>

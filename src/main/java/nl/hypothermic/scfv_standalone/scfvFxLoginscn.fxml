@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import javafx.scene.web.*?>
+<?import javafx.scene.media.*?>
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="93.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="nl.hypothermic.scfv_standalone.scfvLoginController">
+   <children>
+      <Pane blendMode="DARKEN" layoutX="8.0" layoutY="40.0" opacity="0.16" prefHeight="43.0" prefWidth="584.0" style="-fx-background-color: #232323;">
+         <children>
+            <TextField fx:id="userfi" layoutX="104.0" layoutY="6.0" prefHeight="32.0" prefWidth="140.0" style="-fx-focus-color: #ffa500; -fx-accent: #ffa500;" />
+            <PasswordField fx:id="passwdfi" layoutX="339.0" layoutY="6.0" prefHeight="32.0" prefWidth="140.0" />
+         </children></Pane>
+      <Label alignment="CENTER_RIGHT" layoutX="255.0" layoutY="40.0" prefHeight="43.0" prefWidth="90.0" text="Password:">
+         <font>
+            <Font size="15.0" />
+         </font>
+      </Label>
+      <Button fx:id="loginbtn" layoutX="497.0" layoutY="46.0" mnemonicParsing="false" onAction="#loginbtn" prefHeight="32.0" prefWidth="90.0" style="-fx-focus-color: #ffa500; -fx-accent: #ffa500;" text="Login" />
+      <Label alignment="CENTER_RIGHT" layoutX="15.0" layoutY="46.0" prefHeight="32.0" prefWidth="90.0" text="Username:">
+         <font>
+            <Font size="15.0" />
+         </font>
+      </Label>
+      <Pane fx:id="progpane" layoutY="-108.0" opacity="0.6" prefHeight="200.0" prefWidth="600.0" style="-fx-background-color: #232323;" visible="false">
+         <children>
+            <ProgressBar fx:id="progbar" layoutX="200.0" layoutY="90.0" prefWidth="200.0" progress="0.0" />
+         </children>
+      </Pane>
+      <Label layoutX="14.0" layoutY="8.0" prefHeight="32.0" prefWidth="570.0" text="Connection with camera is possible. Please enter your credentials." />
+   </children>
+</AnchorPane>
